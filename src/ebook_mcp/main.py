@@ -6,6 +6,7 @@ from ebooklib import epub
 from pydantic import BaseModel
 from bs4 import BeautifulSoup
 from ebook_mcp.tools import epub_helper, pdf_helper
+from ebook_mcp.tools import get_pdf_local_path
 import logging
 from datetime import datetime
 from ebook_mcp.tools.logger_config import setup_logger  # Import logger config
@@ -69,6 +70,21 @@ logger = logging.getLogger(__name__)
 
 # Initialize FastMCP server
 mcp = FastMCP("ebook-MCP")
+
+@mcp.tool()
+def get_pdf_local_path(url: str) -> str:
+    """
+    Given a PDF URL, deterministically derive a local filename from the URL,
+    check the system temp directory, download if missing, and return the full path.
+
+    Returns:
+        str: Full path to the local PDF file in the system temp directory.
+
+    Raises:
+        ValueError: If the URL is invalid or not HTTP/HTTPS.
+        URLError/HTTPError/OSError: If download or file operations fail.
+    """
+    return get_pdf_local_path.get_pdf_local_path(url)
 
 # EPUB related tools
 @mcp.tool()
